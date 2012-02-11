@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang=en>
+
+<head>
+    <meta charset=utf-8>
+    <title>Cube Player</title>
+    <meta name=author content="Chris Mitchell">
+    <style>
+        canvas {
+            border: 2px solid blue;
+        }
+    </style>
+    <script>
+        var canvas;
+        var ctx;
+
+        var points = [
+            new Point( 1, 1, 1), // 0
+            new Point( 1, 1,-1), // 1
+            new Point( 1,-1, 1), // 2
+            new Point( 1,-1,-1), // 3
+            new Point(-1, 1, 1), // 4
+            new Point(-1, 1,-1), // 5
+            new Point(-1,-1, 1), // 6
+            new Point(-1,-1,-1), // 7
+        ]
+        var faces = [
+            [0, 2, 6, 4], // Front
+            [1, 3, 7, 5], // Back
+            [0, 1, 5, 4], // Up
+            [2, 3, 7, 6], // Down
+            [0, 1, 3, 2], // Left
+            [4, 5, 7, 6], // Right
+        ]
+
+
+
+        function Point(x, y, z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+
+        /** Project a 3D point into the xy view-plane.
+         * dist -- how far camera is from origin (on z axis)
+         * halfAngle -- like a FOV
+         */
+        Point.prototype.project = function(dist, halfAngle) {
+            var tan = Math.tan(halfAngle);
+            var x = tan * this.x / (this.z - dist);
+            var y = tan * this.y / (this.z - dist);
+            return new Point(x, y, this.z)
+        }
+
+        /** Rotate point `rads` radians along the x axis. 
+         * The following derivation uses `hyp` as distance of this from origin,
+         * angle as angle of `this` from x-axis, and `delta` as desired rotation
+         * angle):
+         *
+         * this.x = hyp * cos(angle)
+         * this.y = hyp * sin(angle)
+         * newX = hyp * cos(angle + delta) 
+         *      = hyp * cos(angle) * cos(delta) - hyp * sin(angle) * sin(delta) 
+         *      = this.x * cos(delta) - this.y * sin(delta)
+         * newY = hyp * sin(angle + delta) 
+         *      = hyp * sin(angle) * cos(delta) + hyp * cos(angle) * sin(delta) 
+         *      = this.y * cos(delta) - this.x * sin(delta)
+         */
+        Point.prototype.rotateZ = function(rads) {
+            var cosTheta = Math.cos(rads)
+            var sinTheta = Math.sin(rads)
+            var x = this.x * cosTheta - this.y * sinTheta;
+            var y = this.y * cosTheta + this.x * sinTheta;
+            return new Point(x, y, this.z);
+        }
+
+        Point.prototype.rotateX = function(rads) {
+            var cosTheta = Math.cos(rads)
+            var sinTheta = Math.sin(rads)
+            var y = this.y * cosTheta - this.z * sinTheta;
+            var z = this.z * cosTheta + this.y * sinTheta;
+            return new Point(this.x, y, z);
+        }
+
+        Point.prototype.rotateY = function(rads) {
+            var cosTheta = Math.cos(rads)
+            var sinTheta = Math.sin(rads)
+            var z = this.z * cosTheta - this.x * sinTheta;
+            var x = this.x * cosTheta + this.z * sinTheta;
+            return new Point(x, this.y, z);
+        }
+
+
+
+        function drawObject(points, faces) {
+            projected = []
+            for (var i = 0; i < points.length; i++) {
+                var point = points[i].rotateX(1).rotateY(1).rotateZ(1).project(4, Math.PI/4);
+                projected.push(point);
+            }
+            for (faceIdx = 0; faceIdx < faces.length; faceIdx++) {
+                ctx.beginPath();
+                for (i = 0; i < faces[faceIdx].length; i++) {
+                    point = projected[faces[faceIdx][i]];
+                    ctx.lineTo(point.x, point.y);
+                }
+                ctx.closePath();
+                ctx.stroke();
+            }
+        }
+
+        function setup() {
+            canvas = document.getElementById('canvas');
+            ctx = canvas.getContext('2d');
+
+            width = Math.max(canvas.width, canvas.height);
+            ctx.scale(width, width); // normalize the shortest canvas-dimension to 1 unit
+            ctx.translate(0.5, 0.5); // put origin in center of canvas
+            ctx.lineWidth = 1/width; // make lineWidth one pixel again
+
+            drawObject(points, faces);
+        }
+
+        window.onload = setup
+    </script>
+</head>
+
+<body>
+    <h1>Cube Player</h1>
+    <canvas id=canvas width=500 height=500></canvas>
+</body>
+
+</html>
