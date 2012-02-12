@@ -23,6 +23,7 @@
          * face -- list of point indices for the given face. Must be given in
          *     clockwise order.
          */
+         //TODO change to take shape and face Idx
         function isFaceVisible(face, points) {
             var pt0 = points[face[0]];
             var pt1 = points[face[1]];
@@ -40,21 +41,41 @@
             return (dotProd > 0);
         }
 
+
         function drawCube(shape, rotX, rotY, rotZ) {
             ctx.clearRect(-0.5, -0.5, 1, 1);
+
+            // project the points
             var projected = [];
             for (var i = 0; i < shape.points.length; i++) {
                 var point = shape.points[i].rotateX(rotX).rotateY(rotY).rotateZ(rotZ);
                 point = point.project(4, Math.PI/4);
                 projected.push(point);
             }
+
+            // get faces sorted for painter's algorithm
+            var face_order = []
             for (var faceIdx = 0; faceIdx < shape.faces.length; faceIdx++) {
-                if (isFaceVisible(shape.faces[faceIdx], projected) == false) {
+                var face = shape.faces[faceIdx];
+                var metric = 0;
+                for (var i = 0; i < face.length; i++) {
+                    metric += projected[face[i]].z;
+                }
+                face_order.push({idx: faceIdx, dist: metric })
+            }
+            face_order.sort(function (a, b) { return a.dist - b.dist });
+            var faces = face_order.map(function (a) {return shape.faces[a.idx]});
+
+            // draw the faces
+            for (var j = 0; j < face_order.length; j++) {
+                var faceIdx = face_order[j].idx;
+                var face = shape.faces[faceIdx];
+                if (isFaceVisible(face, projected) == false) {
                     continue;
                 }
                 ctx.beginPath();
-                for (i = 0; i < shape.faces[faceIdx].length; i++) {
-                    point = projected[shape.faces[faceIdx][i]];
+                for (i = 0; i < face.length; i++) {
+                    point = projected[face[i]];
                     ctx.lineTo(point.x, point.y);
                 }
                 ctx.fillStyle = shape.colors[faceIdx];
