@@ -62,3 +62,7 @@ Point.prototype.round = function () {
 Point.prototype.translate = function (deltaX, deltaY, deltaZ) {
     return new Point(this.x + deltaX, this.y + deltaY, this.z + deltaZ);
 };
+
+Point.prototype.scale = function (factor) {
+    return new Point(this.x * factor, this.y * factor, this.z * factor);
+};

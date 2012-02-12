@@ -40,23 +40,24 @@
             return (dotProd > 0);
         }
 
-        function drawCube(rotX, rotY, rotZ) {
+        function drawCube(shape, rotX, rotY, rotZ) {
             ctx.clearRect(-0.5, -0.5, 1, 1);
             var projected = [];
-            for (var i = 0; i < points.length; i++) {
-                var point = points[i].rotateX(rotX).rotateY(rotY).rotateZ(rotZ).project(4, Math.PI/4);
+            for (var i = 0; i < shape.points.length; i++) {
+                var point = shape.points[i].rotateX(rotX).rotateY(rotY).rotateZ(rotZ);
+                point = point.project(4, Math.PI/4);
                 projected.push(point);
             }
-            for (var faceIdx = 0; faceIdx < faces.length; faceIdx++) {
-                if (isFaceVisible(faces[faceIdx], projected) == false) {
+            for (var faceIdx = 0; faceIdx < shape.faces.length; faceIdx++) {
+                if (isFaceVisible(shape.faces[faceIdx], projected) == false) {
                     continue;
                 }
                 ctx.beginPath();
-                for (i = 0; i < faces[faceIdx].length; i++) {
-                    point = projected[faces[faceIdx][i]];
+                for (i = 0; i < shape.faces[faceIdx].length; i++) {
+                    point = projected[shape.faces[faceIdx][i]];
                     ctx.lineTo(point.x, point.y);
                 }
-                ctx.fillStyle = colors[faceIdx];
+                ctx.fillStyle = shape.colors[faceIdx];
                 ctx.fill();
             }
         }
@@ -72,7 +73,7 @@
 
             var angle = 0;
             setInterval(function() {
-                drawCube(angle, angle, angle);
+                drawCube(cube, angle, angle, angle);
                 angle += 0.025;
             }, 20);
         }
