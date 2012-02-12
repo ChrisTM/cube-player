@@ -25,22 +25,22 @@
          */
          //TODO change to take shape and face Idx
         function isFaceVisible(face, points) {
-            var pt0 = points[face[0]];
-            var pt1 = points[face[1]];
-            var pt2 = points[face[2]];
-            var vecA = new Vector(pt1.x - pt0.x,
-                                  pt1.y - pt0.y,
-                                  pt1.z - pt0.z);
-            var vecB = new Vector(pt2.x - pt0.x,
-                                  pt2.y - pt0.y,
-                                  pt2.z - pt0.z);
-            var camVec = new Vector(0, 0, -4);
+            var pt0, pt1, pt2, vecA, vecB, camVec, normal, dotProd;
+            pt0 = points[face[0]];
+            pt1 = points[face[1]];
+            pt2 = points[face[2]];
+            vecA = new Vector(pt1.x - pt0.x,
+                              pt1.y - pt0.y,
+                              pt1.z - pt0.z);
+            vecB = new Vector(pt2.x - pt0.x,
+                              pt2.y - pt0.y,
+                              pt2.z - pt0.z);
+            normal = vecA.cross(vecB);
 
-            var normal = vecA.cross(vecB);
-            var dotProd = normal.dot(camVec);
+            camVec = new Vector(0, 0, -4);
+            dotProd = normal.dot(camVec);
             return (dotProd > 0);
         }
-
 
         function drawCube(shape, rotX, rotY, rotZ) {
             ctx.clearRect(-0.5, -0.5, 1, 1);
@@ -84,15 +84,17 @@
         }
 
         function setup() {
+            var scale, angle;
+
             canvas = document.getElementById('canvas');
             ctx = canvas.getContext('2d');
 
+            scale = Math.min(canvas.width, canvas.height);
             ctx.translate(canvas.width/2, canvas.height/2); // put origin in center of canvas
-            var scale = Math.min(canvas.width, canvas.height);
             ctx.scale(scale, scale); // normalize the shortest canvas-dimension to 1 unit
             ctx.lineWidth = 1/scale; // make lineWidth one pixel again
 
-            var angle = 0;
+            angle = 0;
             setInterval(function() {
                 drawCube(cube, angle, angle, angle);
                 angle += 0.025;

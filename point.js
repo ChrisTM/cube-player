@@ -11,9 +11,10 @@ function Point(x, y, z) {
  * halfAngle -- like a FOV
  */
 Point.prototype.project = function (dist, halfAngle) {
-    var scale = Math.tan(halfAngle) / (this.z - dist);
-    var x = this.x * scale;
-    var y = this.y * scale;
+    var scale, x, y;
+    scale = Math.tan(halfAngle) / (this.z - dist);
+    x = this.x * scale;
+    y = this.y * scale;
     return new Point(x, y, this.z);
 };
 
@@ -32,26 +33,29 @@ Point.prototype.project = function (dist, halfAngle) {
  *      = this.y * cos(delta) - this.x * sin(delta)
  */
 Point.prototype.rotateZ = function (rads) {
-    var cosTheta = Math.cos(rads);
-    var sinTheta = Math.sin(rads);
-    var x = this.x * cosTheta - this.y * sinTheta;
-    var y = this.y * cosTheta + this.x * sinTheta;
+    var cosTheta, sinTheta, x, y;
+    cosTheta = Math.cos(rads);
+    sinTheta = Math.sin(rads);
+    x = this.x * cosTheta - this.y * sinTheta;
+    y = this.y * cosTheta + this.x * sinTheta;
     return new Point(x, y, this.z);
 };
 
 Point.prototype.rotateX = function (rads) {
-    var cosTheta = Math.cos(rads);
-    var sinTheta = Math.sin(rads);
-    var y = this.y * cosTheta - this.z * sinTheta;
-    var z = this.z * cosTheta + this.y * sinTheta;
+    var cosTheta, sinTheta, y, z;
+    cosTheta = Math.cos(rads);
+    sinTheta = Math.sin(rads);
+    y = this.y * cosTheta - this.z * sinTheta;
+    z = this.z * cosTheta + this.y * sinTheta;
     return new Point(this.x, y, z);
 };
 
 Point.prototype.rotateY = function (rads) {
-    var cosTheta = Math.cos(rads);
-    var sinTheta = Math.sin(rads);
-    var z = this.z * cosTheta - this.x * sinTheta;
-    var x = this.x * cosTheta + this.z * sinTheta;
+    var cosTheta, sinTheta, z, x;
+    cosTheta = Math.cos(rads);
+    sinTheta = Math.sin(rads);
+    z = this.z * cosTheta - this.x * sinTheta;
+    x = this.x * cosTheta + this.z * sinTheta;
     return new Point(x, this.y, z);
 };
 
