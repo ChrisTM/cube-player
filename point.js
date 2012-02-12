@@ -6,18 +6,6 @@ function Point(x, y, z) {
     this.z = z;
 }
 
-/** Project a 3D point into the xy view-plane.
- * dist -- how far camera is from origin (on z axis)
- * halfAngle -- like a FOV
- */
-Point.prototype.project = function (dist, halfAngle) {
-    var scale, x, y;
-    scale = Math.tan(halfAngle) / (this.z - dist);
-    x = this.x * scale;
-    y = this.y * scale;
-    return new Point(x, y, this.z);
-};
-
 /** Rotate point `rads` radians along the x axis. 
  * The following derivation uses `hyp` as distance of this from origin,
  * angle as angle of `this` from x-axis, and `delta` as desired rotation
@@ -57,6 +45,18 @@ Point.prototype.rotateY = function (rads) {
     z = this.z * cosTheta - this.x * sinTheta;
     x = this.x * cosTheta + this.z * sinTheta;
     return new Point(x, this.y, z);
+};
+
+/** Project a 3D point into the xy view-plane.
+ * dist -- how far camera is from origin (on z axis)
+ * halfAngle -- like a FOV
+ */
+Point.prototype.project = function (dist, halfAngle) {
+    var scale, x, y;
+    scale = Math.tan(halfAngle) / (this.z - dist);
+    x = this.x * scale;
+    y = this.y * scale;
+    return new Point(x, y, this.z);
 };
 
 Point.prototype.round = function () {

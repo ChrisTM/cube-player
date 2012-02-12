@@ -6,6 +6,45 @@ function Shape(points, faces, colors) {
     this.colors = colors === undefined ? [] : colors;
 }
 
+Shape.prototype.tumble = function (rotX, rotY, rotZ) {
+    var result = new Shape([], this.faces.slice(), this.colors.slice());
+    for (var i = 0; i < this.points.length; i++) {
+        result.points.push(
+                this.points[i].rotateX(rotX).rotateY(rotY).rotateZ(rotZ)
+        );
+    }
+    return result;
+};
+
+Shape.prototype.project = function (dist, halfAngle) {
+    var result = new Shape([], this.faces.slice(), this.colors.slice());
+    for (var i = 0; i < this.points.length; i++) {
+        result.points.push(
+                this.points[i].project(dist, halfAngle)
+        );
+    }
+    return result;
+};
+
+/** Return indices of faces in order of farthest face to closest face.
+ * This info is used for painter's algorithm.
+ */
+Shape.prototype.getFaceOrder = function () {
+    var face_order, faceIdx, face, metric, i;
+    face_order = [];
+    for (faceIdx = 0; faceIdx < this.faces.length; faceIdx++) {
+        face = this.faces[faceIdx];
+        metric = 0;
+        for (i = 0; i < face.length; i++) {
+            metric += this.points[face[i]].z;
+        }
+        face_order.push({idx: faceIdx, dist: metric });
+    }
+    face_order.sort(function (a, b) { return a.dist - b.dist });
+    return face_order.map(function (a) {return a.idx});
+};
+
+
 // This is the base-cube used to procedurally construct the full Rubik's Cube.
 var cubie = new Shape(
     [
@@ -36,7 +75,6 @@ var cubie = new Shape(
     ]
 );
 
-
 var cube = function () {
     var dx, dy, dz, cubieNum, i, point, face, shape;
     var points = [];
@@ -56,7 +94,7 @@ var cube = function () {
                     point = cubie.points[i].scale(0.95).translate(dx*2-2, dy*2-2, dz*2-2);
                     point = point.scale(1/3);
                     points.push(point);
-                    spatial[dx][dy][dz].push(points.length-1)
+                    spatial[dx][dy][dz].push(points.length-1);
                 }
                 for (i = 0; i < cubie.faces.length; i++) {
                     face = cubie.faces[i].map(function (idx) { return idx + 8 * cubieNum });
