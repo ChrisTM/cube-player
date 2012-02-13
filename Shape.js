@@ -26,23 +26,6 @@ Shape.prototype.project = function (dist, halfAngle) {
     return result;
 };
 
-/** Return indices of faces in order of farthest face to closest face.
- * This info is used for painter's algorithm.
- */
-Shape.prototype.getFaceOrder = function () {
-    var face_order, faceIdx, face, metric, i;
-    face_order = [];
-    for (faceIdx = 0; faceIdx < this.faces.length; faceIdx++) {
-        face = this.faces[faceIdx];
-        metric = 0;
-        for (i = 0; i < face.length; i++) {
-            metric += this.points[face[i]].z;
-        }
-        face_order.push({idx: faceIdx, dist: metric });
-    }
-    face_order.sort(function (a, b) { return a.dist - b.dist });
-    return face_order.map(function (a) {return a.idx});
-};
 
 
 // This is the base-cube used to procedurally construct the full Rubik's Cube.
