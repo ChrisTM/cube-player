@@ -7,23 +7,13 @@ function Shape(points, faces, colors) {
 }
 
 Shape.prototype.tumble = function (rotX, rotY, rotZ) {
-    var result = new Shape([], this.faces.slice(), this.colors.slice());
-    for (var i = 0; i < this.points.length; i++) {
-        result.points.push(
-                this.points[i].rotateX(rotX).rotateY(rotY).rotateZ(rotZ)
-        );
-    }
-    return result;
+    var tumble = compose(rotateZ(rotZ), rotateY(rotY), rotateX(rotX));
+    return new Shape(this.points.map(tumble), this.faces.slice(), this.colors.slice());
 };
 
 Shape.prototype.project = function (dist, halfAngle) {
-    var result = new Shape([], this.faces.slice(), this.colors.slice());
-    for (var i = 0; i < this.points.length; i++) {
-        result.points.push(
-                this.points[i].project(dist, halfAngle)
-        );
-    }
-    return result;
+    var newPoints = this.points.map(project(dist, halfAngle));
+    return new Shape(newPoints, this.faces.slice(), this.colors.slice());
 };
 
 
@@ -63,22 +53,18 @@ var cube = function () {
     var points = [];
     var faces = [];
     var colors = [];
-    // element [x][y][z] is a list of the points that are in cubie position [x][y][z].
-    var spatial = [];
+    // element [x][y][z] of spatial is a list of the points that are in cubie position [x][y][z].
+    //var spatial = [];
 
     cubieNum = 0;
     for (dx = 0; dx < 3; dx++) {
-        spatial[dx] = [];
+        //spatial[dx] = [];
         for (dy = 0; dy < 3; dy++) {
-            spatial[dx][dy] = [];
+            //spatial[dx][dy] = [];
             for (dz = 0; dz < 3; dz++) {
-                spatial[dx][dy][dz] = [];
-                for (i = 0; i < cubie.points.length; i++) {
-                    point = cubie.points[i].scale(0.95).translate(dx*2-2, dy*2-2, dz*2-2);
-                    point = point.scale(1/3);
-                    points.push(point);
-                    spatial[dx][dy][dz].push(points.length-1);
-                }
+                //spatial[dx][dy][dz] = [];
+                var transform = compose(scale(1/3), translate(dx*2-2, dy*2-2, dz*2-2), scale(0.90));
+                points = points.concat(cubie.points.map(transform));
                 for (i = 0; i < cubie.faces.length; i++) {
                     face = cubie.faces[i].map(function (idx) { return idx + 8 * cubieNum });
                     faces.push(face);
@@ -89,6 +75,6 @@ var cube = function () {
         }
     }
     shape = new Shape(points, faces, colors); 
-    shape.spatial = spatial;
+    //shape.spatial = spatial;
     return shape;
 }();

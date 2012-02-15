@@ -6,67 +6,80 @@ function Point(x, y, z) {
     this.z = z;
 }
 
-/** Rotate point `rads` radians along the x axis. 
- * The following derivation uses `hyp` as distance of this from origin,
- * angle as angle of `this` from x-axis, and `delta` as desired rotation
- * angle):
+
+/** Return a function that rotates a point `rads` radians along the z axis. 
  *
- * this.x = hyp * cos(angle)
- * this.y = hyp * sin(angle)
+ * The following derivation uses `hyp` as distance of point from origin, angle
+ * as angle of point from x-axis, and `delta` as desired rotation angle).
+ *
+ * point.x = hyp * cos(angle)
+ * point.y = hyp * sin(angle)
  * newX = hyp * cos(angle + delta) 
  *      = hyp * cos(angle) * cos(delta) - hyp * sin(angle) * sin(delta) 
- *      = this.x * cos(delta) - this.y * sin(delta)
+ *      = point.x * cos(delta) - point.y * sin(delta)
  * newY = hyp * sin(angle + delta) 
  *      = hyp * sin(angle) * cos(delta) + hyp * cos(angle) * sin(delta) 
- *      = this.y * cos(delta) - this.x * sin(delta)
+ *      = point.y * cos(delta) - point.x * sin(delta)
  */
-Point.prototype.rotateZ = function (rads) {
-    var cosTheta, sinTheta, x, y;
+function rotateZ(rads) {
+    var cosTheta, sinTheta;
     cosTheta = Math.cos(rads);
     sinTheta = Math.sin(rads);
-    x = this.x * cosTheta - this.y * sinTheta;
-    y = this.y * cosTheta + this.x * sinTheta;
-    return new Point(x, y, this.z);
-};
+    return function (point) {
+        var x = point.x * cosTheta - point.y * sinTheta;
+        var y = point.y * cosTheta + point.x * sinTheta;
+        return new Point(x, y, point.z);
+    };
+}
 
-Point.prototype.rotateX = function (rads) {
-    var cosTheta, sinTheta, y, z;
+function rotateX(rads) {
+    var cosTheta, sinTheta;
     cosTheta = Math.cos(rads);
     sinTheta = Math.sin(rads);
-    y = this.y * cosTheta - this.z * sinTheta;
-    z = this.z * cosTheta + this.y * sinTheta;
-    return new Point(this.x, y, z);
-};
+    return function (point) {
+        var y = point.y * cosTheta - point.z * sinTheta;
+        var z = point.z * cosTheta + point.y * sinTheta;
+        return new Point(point.x, y, z);
+    };
+}
 
-Point.prototype.rotateY = function (rads) {
-    var cosTheta, sinTheta, z, x;
+function rotateY(rads) {
+    var cosTheta, sinTheta;
     cosTheta = Math.cos(rads);
     sinTheta = Math.sin(rads);
-    z = this.z * cosTheta - this.x * sinTheta;
-    x = this.x * cosTheta + this.z * sinTheta;
-    return new Point(x, this.y, z);
-};
+    return function (point) {
+        var z = point.z * cosTheta - point.x * sinTheta;
+        var x = point.x * cosTheta + point.z * sinTheta;
+        return new Point(x, point.y, z);
+    };
+}
 
-/** Project a 3D point into the xy view-plane.
- * dist -- how far camera is from origin (on z axis)
- * halfAngle -- like a FOV
+/** Return a function that project a 3D point into the xy view-plane.
+ * Arguments:
+ *     dist -- how far camera is from origin (on z axis)
+ *     halfAngle -- like a FOV
  */
-Point.prototype.project = function (dist, halfAngle) {
-    var scale, x, y;
-    scale = Math.tan(halfAngle) / (this.z - dist);
-    x = this.x * scale;
-    y = this.y * scale;
-    return new Point(x, y, this.z);
+function project(dist, halfAngle) {
+    var tan = Math.tan(halfAngle);
+    return function (point) {
+        var x = (point.x * tan) / (point.z - dist);
+        var y = (point.y * tan) / (point.z - dist);
+        return new Point(x, y, point.z);
+    };
+}
+
+function translate(deltaX, deltaY, deltaZ) {
+    return function (point) {
+        return new Point(point.x + deltaX, point.y + deltaY, point.z + deltaZ);
+    };
+}
+
+function scale(factor) {
+    return function (point) {
+        return new Point(point.x * factor, point.y * factor, point.z * factor);
+    };
 };
 
-Point.prototype.round = function () {
-    return new Point(Math.round(this.x), Math.round(this.y), Math.round(this.z));
-};
-
-Point.prototype.translate = function (deltaX, deltaY, deltaZ) {
-    return new Point(this.x + deltaX, this.y + deltaY, this.z + deltaZ);
-};
-
-Point.prototype.scale = function (factor) {
-    return new Point(this.x * factor, this.y * factor, this.z * factor);
-};
+function copy(point) {
+    return new Point(point.x, point.y, point.z);
+}
