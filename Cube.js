@@ -4,7 +4,7 @@ function Cube(points, faces, colors, position) {
     this.points = points === undefined ? [] : points;
     this.faces = faces === undefined ? [] : faces;
     this.colors = colors === undefined ? [] : colors;
-    // position[dx][dy][dz] is a list of the points at that logical place in
+    // position[x][y][z] is a list of the points at that logical place in
     // the cube. position[i][j][2] (for all i,j in 0..2) are indinces to the
     // front-layer points.
     this.position = position === undefined ? [[[],[],[]]
@@ -13,7 +13,7 @@ function Cube(points, faces, colors, position) {
 }
 
 // I currently make the assumption that this.faces and this.colors never ever
-// change, so we don't copy them.
+// change, so we don't clone them.
 Cube.prototype.tumble = function (rotX, rotY, rotZ) {
     var newPoints = this.points.map(
         compose(rotateZ(rotZ), rotateY(rotY), rotateX(rotX))
@@ -27,7 +27,7 @@ Cube.prototype.project = function (dist, halfAngle) {
 };
 
 Cube.prototype.clone = function () {
-    return new Cube(this.points.clone(), this.faces, this.colors);
+    return new Cube(this.points.clone(), this.faces, this.colors, this.position.clone());
 };
 
 
@@ -62,20 +62,20 @@ var cubie = new Cube(
 );
 
 var cube = function () {
-    var dx, dy, dz, transform, cubieNum, i, point, face, shape;
+    var x, y, z, transform, cubieNum, i, point, face, shape;
     var result = new Cube();
 
     cubieNum = 0;
-    for (dx = 0; dx < 3; dx++) {
-        for (dy = 0; dy < 3; dy++) {
-            for (dz = 0; dz < 3; dz++) {
-                transform = compose(scale(1/3), translate(dx*2-2, dy*2-2, dz*2-2), scale(0.90));
+    for (x = 0; x < 3; x++) {
+        for (y = 0; y < 3; y++) {
+            for (z = 0; z < 3; z++) {
+                transform = compose(scale(1/3), translate(x*2-2, y*2-2, z*2-2), scale(0.90));
                 result.points = result.points.concat(cubie.points.map(transform));
                 for (i = 0; i < cubie.faces.length; i++) {
                     result.colors.push(cubie.colors[i]);
                     result.faces.push(cubie.faces[i].map(function (idx) { return idx + 8 * cubieNum }));
                 }
-                result.position[dx][dy][dz] = new function () {
+                result.position[x][y][z] = function () {
                     var indices = [];
                     for (var i = 0; i < 8; i++) {
                         indices.push(i + 8 * cubieNum);
@@ -89,27 +89,74 @@ var cube = function () {
     return result; 
 }();
 
-var moveU = function(cube) {
-    // There are few enough points to allow iteration over all points. A better
-    // implementation might keep the points in a 3D matrix or just maintain a
-    // single 3D matrix with values being indices to the pointsarray.
-    // filter the UP points
-    // rotate UP points 90degY, rotate UP locations -90degY.
+// Given a cube and a face ('U', 'D', etc.), return a list of indices pointing
+// to the points in that face.
+var selectPointIdxs = function (cube, face) {
+    var xMin = 0; var xMax = 2;
+    var yMin = 0; var yMax = 2;
+    var zMin = 0; var zMax = 2;
 
-    var result = cube.clone();
-
-    var cw90y = rotateY(Math.PI/2);
-    var ccw90y = rotateY(-Math.PI/2);
-
-    var dy = 2;
-    for (var dx = 0; dx < 3; dx++) {
-        for (var dz = 0; dz < 3; dz++) {
-            var indices = cube.position[dx][dy][dz];
-            for (var i = 0; i < indices.length; i++) {
-                result.points[indices[i]] = cw90y(cube.points[indices[i]]);
+    // lock the ranges so they select only the given face
+    switch(face) {
+        case 'U':
+            yMin = yMax = 2; break;
+        case 'D':
+            yMin = yMax = 0; break;
+        case 'R':
+            xMin = xMax = 0; break;
+        case 'L':
+            xMin = xMax = 2; break;
+        case 'F':
+            zMin = zMax = 2; break;
+        case 'B':
+            zMin = zMax = 0; break;
+        default:
+            throw new Error('Invalid face');
+    }
+    var indices = [];
+    for (var x = xMin; x <= xMax; x++) {
+        for (var y = yMin; y <= yMax; y++) {
+            for (var z = zMin; z <= zMax; z++) {
+                indices = indices.concat(cube.position[x][y][z]);
             }
         }
     }
+    return indices;
+};
+
+var move = function(cube, move) {
+    // TODO: make this also update the result.position values
+    var result, move, trans_fn, forward;
+    result = cube.clone();
+
+    switch(move.face) {
+        case 'U':
+            forward = rotateY(move.angle);
+            break;
+        case 'D':
+            forward = rotateY(-move.angle);
+            break;
+        case 'R':
+            forward = rotateX(move.angle);
+            break;
+        case 'L':
+            forward = rotateX(-move.angle);
+            break;
+        case 'F':
+            forward = rotateZ(move.angle);
+            break;
+        case 'B':
+            forward = rotateZ(-move.angle);
+            break;
+        default:
+            throw new Error("Invalid face");
+    }
+
+    var indices = selectPointIdxs(cube, move.face);
+    for (var i = 0; i < indices.length; i++) {
+        var idx = indices[i];
+        result.points[idx] = forward(cube.points[idx]);
+    }
 
     return result;
-}
+};

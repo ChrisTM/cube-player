@@ -18,8 +18,9 @@
     <script>
         'use strict';
 
-        cube = moveU(cube);
-        console.log(cube.points[208]);
+        var moves = parseMoves("UUDDFFBBLLRR");
+        cube = moves.reduce(move, cube);
+
         function setup() {
             initializeCanvas(document.getElementById('canvas'));
             drawShape(cube, Math.PI/4, Math.PI/4, 0);
@@ -30,7 +31,7 @@
                 var y = Math.PI * (Math.sin(5*angle) + Math.sin(13*angle));
                 var z = Math.PI * (Math.sin(7*angle) + Math.sin(11*angle));
                 drawShape(cube.tumble(x, y, z));
-                angle += 0.0005;
+                angle += 0.000125;
             }, 20);
         }
 

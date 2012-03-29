@@ -37,8 +37,8 @@ function rotateZ(rads) {
 
 function rotateX(rads) {
     var cosTheta, sinTheta;
-    cosTheta = Math.cos(rads);
-    sinTheta = Math.sin(rads);
+    cosTheta = Math.cos(-rads);
+    sinTheta = Math.sin(-rads);
     return function (point) {
         var y = point.y * cosTheta - point.z * sinTheta;
         var z = point.z * cosTheta + point.y * sinTheta;
