@@ -6,6 +6,9 @@ function Point(x, y, z) {
     this.z = z;
 }
 
+Point.prototype.clone = function () {
+    return new Point(this.x, this.y, this.z);
+}
 
 /** Return a function that rotates a point `rads` radians along the z axis. 
  *
@@ -80,6 +83,3 @@ function scale(factor) {
     };
 };
 
-function copy(point) {
-    return new Point(point.x, point.y, point.z);
-}

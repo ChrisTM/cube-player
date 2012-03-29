@@ -1,3 +1,5 @@
+'use strict';
+
 function compose() {
     var fns = arguments;
     return function () {
@@ -8,4 +10,14 @@ function compose() {
         }
         return result;
     };
+}
+
+Array.prototype.clone = function() {
+    var result = this.slice();
+    for (var i = 0; i < this.length; i++) {
+        if (this[i].clone) {
+            result[i] = this[i].clone();
+        }
+    }
+    return result;
 }

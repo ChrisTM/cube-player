@@ -13,20 +13,23 @@
     <script src="utils.js"></script>
     <script src="Point.js"></script>
     <script src="Vector.js"></script>
-    <script src="Shape.js"></script>
+    <script src="Cube.js"></script>
     <script src="render.js"></script>
     <script>
         'use strict';
 
+        cube = moveU(cube);
+        console.log(cube.points[208]);
         function setup() {
             initializeCanvas(document.getElementById('canvas'));
+            drawShape(cube, Math.PI/4, Math.PI/4, 0);
 
             var angle = 0;
             setInterval(function () {
                 var x = Math.PI * (Math.sin(3*angle) + Math.sin(17*angle));
                 var y = Math.PI * (Math.sin(5*angle) + Math.sin(13*angle));
                 var z = Math.PI * (Math.sin(7*angle) + Math.sin(11*angle));
-                drawShape(cube, x, y, z);
+                drawShape(cube.tumble(x, y, z));
                 angle += 0.0005;
             }, 20);
         }

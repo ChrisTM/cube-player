@@ -54,13 +54,14 @@ function getFaceOrder(shape) {
     return face_order.map(function (a) {return a.idx});
 };
 
-function drawShape(shape, rotX, rotY, rotZ) {
+
+// TODO: To make this more single-purposed, move the tumbling outside of this function
+function drawShape(shape) {
     var faceIndices, faceIdx, face; // used for painter's algo
     var i, j, point;
 
     ctx.clearRect(-0.5, -0.5, 1, 1);
 
-    shape = shape.tumble(rotX, rotY, rotZ);
     shape = shape.project(4, Math.PI/4);
 
     // get distance-sorted face indices for painter's algorithm
