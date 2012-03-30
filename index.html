@@ -21,6 +21,10 @@
     <script>
         'use strict';
 
+        var x = 0; 
+        var y = 1; 
+        var z = 0;
+
         // data used to manage the click-to-tumble feature
         var tumbleInfo = {
             dragging: false,
@@ -32,8 +36,6 @@
             startY: null
         };
 
-        var x = 0; var y = 0; var z = 0;
-
         var moves = parseMoves("F L F U' R U F2 L2 U' L' B D' B' L2 U");
         cube = moves.reduce(move, cube);
 
@@ -41,6 +43,12 @@
             if (tumbleInfo.dragging) {
                 y = tumbleInfo.startY + 0.01 * (tumbleInfo.clickX - e.screenX);
                 x = tumbleInfo.startX + 0.01 * (tumbleInfo.clickY - e.screenY);
+                if (x > Math.PI/2) {
+                    x = Math.PI/2;
+                }
+                else if (x < -Math.PI/2) {
+                    x = -Math.PI/2;
+                }
             }
         }
 

@@ -16,7 +16,7 @@ function Cube(points, faces, colors, position) {
 // change, so we don't clone them.
 Cube.prototype.tumble = function (rotX, rotY, rotZ) {
     var newPoints = this.points.map(
-        compose(rotateZ(rotZ), rotateY(rotY), rotateX(rotX))
+        compose(rotateX(rotX), rotateY(rotY), rotateZ(rotZ))
     );
     return new Cube(newPoints, this.faces, this.colors);
 };
