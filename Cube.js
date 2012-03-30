@@ -89,74 +89,76 @@ var cube = function () {
     return result; 
 }();
 
-// Given a cube and a face ('U', 'D', etc.), return a list of indices pointing
-// to the points in that face.
-var selectPointIdxs = function (cube, face) {
+// Given a face ('U', 'D', etc.), return a list of 3D indices that represent
+// the cubies in that face. These indices are used to lookup the points in
+// the 3D array `cube.position`.
+var getCubieIndices = function (face) {
     var xMin = 0; var xMax = 2;
     var yMin = 0; var yMax = 2;
     var zMin = 0; var zMax = 2;
 
     // lock the ranges so they select only the given face
     switch(face) {
-        case 'U':
-            yMin = yMax = 2; break;
-        case 'D':
-            yMin = yMax = 0; break;
-        case 'R':
-            xMin = xMax = 0; break;
-        case 'L':
-            xMin = xMax = 2; break;
-        case 'F':
-            zMin = zMax = 2; break;
-        case 'B':
-            zMin = zMax = 0; break;
-        default:
-            throw new Error('Invalid face');
+        case 'U': yMin = yMax = 2; break;
+        case 'D': yMin = yMax = 0; break;
+        case 'R': xMin = xMax = 0; break;
+        case 'L': xMin = xMax = 2; break;
+        case 'F': zMin = zMax = 2; break;
+        case 'B': zMin = zMax = 0; break;
+        default: throw new Error('Invalid face');
     }
     var indices = [];
     for (var x = xMin; x <= xMax; x++) {
         for (var y = yMin; y <= yMax; y++) {
             for (var z = zMin; z <= zMax; z++) {
-                indices = indices.concat(cube.position[x][y][z]);
+                // this isn't actually a point, but it's terribly convienent to
+                // think and use it as such.
+                indices = indices.concat(new Point(x, y, z));
             }
         }
     }
     return indices;
 };
 
+var selectPointIndices = function (cube, face) {
+    var cubieIndices = getCubieIndices(face);
+    var pointIndices = [];
+    for (var i = 0; i < cubieIndices.length; i++) {
+        var idx = cubieIndices[i];
+        pointIndices = pointIndices.concat(cube.position[idx.x][idx.y][idx.z]);
+    }
+    return pointIndices;
+}
+
 var move = function(cube, move) {
-    // TODO: make this also update the result.position values
-    var result, move, trans_fn, forward;
+    var result, move, forward, backward;
     result = cube.clone();
 
     switch(move.face) {
-        case 'U':
-            forward = rotateY(move.angle);
-            break;
-        case 'D':
-            forward = rotateY(-move.angle);
-            break;
-        case 'R':
-            forward = rotateX(move.angle);
-            break;
-        case 'L':
-            forward = rotateX(-move.angle);
-            break;
-        case 'F':
-            forward = rotateZ(move.angle);
-            break;
-        case 'B':
-            forward = rotateZ(-move.angle);
-            break;
-        default:
+        case 'U': forward = rotateY( move.angle); backward = rotateY(-move.angle); break;
+        case 'D': forward = rotateY(-move.angle); backward = rotateY( move.angle); break;
+        case 'R': forward = rotateX( move.angle); backward = rotateX(-move.angle); break;
+        case 'L': forward = rotateX(-move.angle); backward = rotateX( move.angle); break;
+        case 'F': forward = rotateZ( move.angle); backward = rotateZ(-move.angle); break;
+        case 'B': forward = rotateZ(-move.angle); backward = rotateZ( move.angle); break;
+        default: 
             throw new Error("Invalid face");
     }
 
-    var indices = selectPointIdxs(cube, move.face);
+    var indices = selectPointIndices(cube, move.face);
     for (var i = 0; i < indices.length; i++) {
         var idx = indices[i];
         result.points[idx] = forward(cube.points[idx]);
     }
+
+    var idxTran = compose(round, translate(1,1,1), backward, translate(-1,-1,-1));
+    var cubieIndices = getCubieIndices(move.face);
+    for (var i = 0; i < cubieIndices.length; i++) {
+        var idx = cubieIndices[i];
+        var revIdx = idxTran(idx);
+        result.position[idx.x][idx.y][idx.z] = cube.position[revIdx.x][revIdx.y][revIdx.z];
+    }
+
 
     return result;
 };

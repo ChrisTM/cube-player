@@ -83,3 +83,7 @@ function scale(factor) {
     };
 };
 
+// useful for doing transformations on indices
+function round(point) {
+    return new Point(Math.round(point.x), Math.round(point.y), Math.round(point.z));
+}
