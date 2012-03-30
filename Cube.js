@@ -52,12 +52,12 @@ var cubie = new Cube(
         [1, 3, 2, 0]  // Left
     ],
     [
-        'red',    // Front
-        'orange', // Back
-        'yellow', // Up
+        'white',    // Front
+        'yellow', // Back
+        'blue', // Up
         'green',  // Down
-        'blue',   // Right
-        'purple'  // Left
+        'red',   // Right
+        'orange'  // Left
     ]
 );
 
@@ -69,7 +69,7 @@ var cube = function () {
     for (x = 0; x < 3; x++) {
         for (y = 0; y < 3; y++) {
             for (z = 0; z < 3; z++) {
-                transform = compose(scale(1/3), translate(x*2-2, y*2-2, z*2-2), scale(0.90));
+                transform = compose(scale(1/3), translate(x*2-2, y*2-2, z*2-2));
                 result.points = result.points.concat(cubie.points.map(transform));
                 for (i = 0; i < cubie.faces.length; i++) {
                     result.colors.push(cubie.colors[i]);

@@ -25,12 +25,12 @@ Array.prototype.clone = function() {
 
 // given a string of moves, return a list of move objects
 var parseMoves = function (movesString) {
-    var moveRegex = /(2?)([UDFBLR])('?)/g;
+    var moveRegex = /([UDFBLR])(2?)('?)/g;
     var moves = [];
     var match;
     while ((match = moveRegex.exec(movesString)) !== null) {
-        var face = match[2];
-        var angle = (match[1]) ? Math.PI : Math.PI/2.0; // check for the 2
+        var face = match[1];
+        var angle = (match[2]) ? Math.PI : Math.PI/2.0; // check for the 2
         if (match[3]) { // check for the prime
             angle = -angle;
         }

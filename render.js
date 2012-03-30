@@ -9,7 +9,8 @@ function initializeCanvas(canvas) {
     var scale = Math.min(canvas.width, canvas.height);
     ctx.translate(canvas.width/2, canvas.height/2); // put origin in center of canvas
     ctx.scale(scale, scale); // normalize the shortest canvas-dimension to 1 unit
-    ctx.lineWidth = 1/scale; // make lineWidth one pixel again
+    ctx.lineWidth = 2.5/scale; // make lineWidth 2.5 pixels
+    ctx.lineJoin = 'round'; // reduces certain artifacts when drawing cubie outlines
 }
 
 
@@ -55,7 +56,6 @@ function getFaceOrder(shape) {
 };
 
 
-// TODO: To make this more single-purposed, move the tumbling outside of this function
 function drawShape(shape) {
     var faceIndices, faceIdx, face; // used for painter's algo
     var i, j, point;
@@ -83,7 +83,9 @@ function drawShape(shape) {
             point = shape.points[face[j]];
             ctx.lineTo(point.x, point.y);
         }
+        ctx.closePath();
         ctx.fillStyle = shape.colors[faceIdx];
         ctx.fill();
+        ctx.stroke();
     }
 }

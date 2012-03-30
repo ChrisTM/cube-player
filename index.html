@@ -6,8 +6,11 @@
     <title>Cube Player</title>
     <meta name=author content="Chris Mitchell">
     <style>
+        body {
+            background-color: #BBB;
+        }
         canvas {
-            border: 2px solid blue;
+            background-color: #888;
         }
     </style>
     <script src="utils.js"></script>
@@ -18,7 +21,7 @@
     <script>
         'use strict';
 
-        var moves = parseMoves("FLFU'RU2F2LU'L'BD'B'2LU");
+        var moves = parseMoves("F L F U' R U F2 L2 U' L' B D' B' L2 U");
         cube = moves.reduce(move, cube);
 
         function setup() {
