@@ -61,7 +61,7 @@ var cubie = new Cube(
     ]
 );
 
-var cube = function () {
+var newCube = function () {
     var x, y, z, transform, cubieNum, i, point, face, shape;
     var result = new Cube();
 
@@ -87,7 +87,9 @@ var cube = function () {
         }
     }
     return result; 
-}();
+};
+
+var cube = newCube();
 
 // Given a face ('U', 'D', etc.), return a list of 3D indices that represent
 // the cubies in that face. These indices are used to lookup the points in

@@ -6,11 +6,59 @@
     <title>Cube Player</title>
     <meta name=author content="Chris Mitchell">
     <style>
+        * { margin: 0; padding: 0; }
         body {
             background-color: #BBB;
+            padding: 1em;
+            font-family: sans-serif;
+            line-height: 1.5em;
         }
+
+        h1 {
+            font-size: 2em;
+            line-height: 2em;
+        }
+
+        h2 {
+            font-size: 1.5em;
+            line-height: 1em;
+            margin-bottom: 0.75em;
+        }
+
+        h3 {
+            margin-top: 0.5em;
+            margin-bottom: 0.25em;
+        }
+
+        p {
+            margin: 1em 0;
+        }
+
+
         canvas {
             background-color: #888;
+        }
+        figure, figcaption, section {
+            display: block;
+        }
+        figure {
+            padding: 0.5em;
+            float: left;
+            margin-right: 1em;
+            margin-bottom: 1em;
+            border: 1px solid black;
+        }
+        input, button, select {
+            font-size: inherit;
+            padding: 0.25em;
+        }
+
+        samp {
+            font-family: monospace;
+            background-color: #AAA;
+            border: 1px solid #999;
+            padding: 0.25em;
+            margin: 2px;
         }
     </style>
     <script src="utils.js"></script>
@@ -21,9 +69,63 @@
     <script>
         'use strict';
 
-        var x = 0; 
-        var y = 1; 
-        var z = 0;
+        /* Functions for applying custom/preset moves
+         * ========================================== */
+        var scrambled = false;
+
+        function applyMoves(movesString) {
+            var moves = parseMoves(movesString);
+            cube = moves.reduce(move, cube);
+        }
+
+        function resetCube() {
+            console.log("resetting");
+            cube = newCube();
+
+            var captionEl = document.getElementById('caption');
+            captionEl.innerHTML = 'A solved cube.';
+        }
+
+        function onResetCube() {
+            resetCube();
+            scrambled = false;
+            redraw();
+        }
+
+        function onApply_(movesString) {
+            applyMoves(movesString);
+            var captionEl = document.getElementById('caption');
+            // this logic is to determine if we're replacing the "A solved
+            // cube." caption or appending new moves to the caption.
+            movesString = '<samp>' + movesString + '</samp>';
+            if (scrambled === false) {
+                captionEl.innerHTML = movesString;
+            } else {
+            captionEl.innerHTML = captionEl.innerHTML + '<br>' + movesString;
+            }
+            scrambled = true;
+            redraw();
+        }
+
+        function onApplyPreset() {
+            var movesString = document.getElementById('preset-moves').value;
+            onApply_(movesString);
+        }
+
+        function onApplyCustom() {
+            var movesString = document.getElementById('custom-moves').value;
+            if (movesString === '') {
+                return;
+            }
+            onApply_(movesString);
+        }
+
+
+        /* Drag to tumble functionality
+         * ============================ */
+        var x = -0.4; 
+        var y =  0.5; 
+        var z =  0;
 
         // data used to manage the click-to-tumble feature
         var tumbleInfo = {
@@ -35,10 +137,6 @@
             startX: null,
             startY: null
         };
-
-        var moves = parseMoves("F L F U' R U F2 L2 U' L' B D' B' L2 U");
-        cube = moves.reduce(move, cube);
-
         function onMouseMove(e) {
             if (tumbleInfo.dragging) {
                 y = tumbleInfo.startY + 0.01 * (tumbleInfo.clickX - e.screenX);
@@ -65,22 +163,35 @@
             tumbleInfo.dragging = false;
         }
 
-        function animate() {
+        function redraw() {
             drawShape(cube.tumble(x, y, z));
+        }
+
+        function animate() {
+            redraw();
             if (tumbleInfo.dragging) {
                 setTimeout(animate, 20);
             }
         }
 
+        /* Attach event handlers and init graphics
+         * ======================================= */
         function setup() {
             var canvas = document.getElementById('canvas');
-            canvas.addEventListener("mousedown", onMouseDown, false);
-            window.addEventListener("mouseup", onMouseUp, false);
-            window.addEventListener("mousemove", onMouseMove, false);
+            canvas.addEventListener('mousedown', onMouseDown, false);
+            window.addEventListener('mouseup', onMouseUp, false);
+            window.addEventListener('mousemove', onMouseMove, false);
+
+            var resetButtons = document.querySelectorAll('.reset-button');
+            resetButtons[0].addEventListener('click', onResetCube, false);
+            resetButtons[1].addEventListener('click', onResetCube, false);
+            document.getElementById('apply-preset').addEventListener('click',
+                onApplyPreset, false);
+            document.getElementById('apply-custom').addEventListener('click',
+                onApplyCustom, false);
 
             initializeCanvas(canvas);
-
-            animate();
+            redraw();
         }
 
         window.onload = setup;
@@ -89,7 +200,35 @@
 
 <body>
     <h1>Cube Player</h1>
-    <canvas id=canvas width=500 height=500></canvas>
+    <p>Experiment with applying different patterns to a cube. Click and drag the cube to see it from other angles. The cube's caption will describe what moves have been applied to it.</p>
+
+    <figure>
+        <canvas id=canvas width=500 height=500></canvas>
+        <figcaption id=caption>A solved cube.</figcaption>
+    </figure>
+
+    <section id=controls>
+        <h2>Apply your own moves</h2>
+        <h3>Use a preset</h3>
+        <select id=preset-moves>
+            <option value="F2 B2 R2 L2 U2 D2">Checkers</option>
+            <option value="U D' R L' F B' U D'">Spots</option>
+            <option value="F L F U' R U F2 L2 U' L' B D' B' L2 U">Cube in Cube</option>
+            <option value="L B2 D R B' F D' L' R D' U F' R2 U'">Snake</option>
+            <option value="F U2 L F L' B L U B' R' L' U R' D' F' B R2">Exchanged Peaks</option>
+            <option value="F U F R L2 B D' R D2 L D' B R2 L F U F">Stripes</option>
+        </select>
+        <button id=apply-preset>Apply</button>
+        <button class=reset-button>Reset</button>
+
+        <h3>Use your own moves</h3>
+        <input id=custom-moves placeholder="example: UR2U'">
+        <button id=apply-custom>Apply</button>
+        <button class=reset-button>Reset</button>
+
+        <p>Valid moves are given by <samp>F</samp>, <samp>B</samp>,
+        <samp>U</samp>, <samp>D</samp>, <samp>L</samp>, <samp>R</samp>, which represent rotating the front, back, up, down, left, or right faces a quarter-turn clockwise. Counter-clockwise or 180 degree turns are done by adding either a <samp>2</samp> or a <samp>'</samp> (single prime) directly after a face. <samp>F2</samp> means "rotate the front face 180 degrees".</p>
+    </section>
 </body>
 
 </html>
