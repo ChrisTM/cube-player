@@ -52,11 +52,11 @@ var cubie = new Cube(
         [1, 3, 2, 0]  // Left
     ],
     [
-        'white',    // Front
+        'white',  // Front
         'yellow', // Back
-        'blue', // Up
+        'blue',   // Up
         'green',  // Down
-        'red',   // Right
+        'red',    // Right
         'orange'  // Left
     ]
 );

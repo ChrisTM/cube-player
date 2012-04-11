@@ -5,62 +5,7 @@
     <meta charset=utf-8>
     <title>Cube Player</title>
     <meta name=author content="Chris Mitchell">
-    <style>
-        * { margin: 0; padding: 0; }
-        body {
-            background-color: #BBB;
-            padding: 1em;
-            font-family: sans-serif;
-            line-height: 1.5em;
-        }
-
-        h1 {
-            font-size: 2em;
-            line-height: 2em;
-        }
-
-        h2 {
-            font-size: 1.5em;
-            line-height: 1em;
-            margin-bottom: 0.75em;
-        }
-
-        h3 {
-            margin-top: 0.5em;
-            margin-bottom: 0.25em;
-        }
-
-        p {
-            margin: 1em 0;
-        }
-
-
-        canvas {
-            background-color: #888;
-        }
-        figure, figcaption, section {
-            display: block;
-        }
-        figure {
-            padding: 0.5em;
-            float: left;
-            margin-right: 1em;
-            margin-bottom: 1em;
-            border: 1px solid black;
-        }
-        input, button, select {
-            font-size: inherit;
-            padding: 0.25em;
-        }
-
-        samp {
-            font-family: monospace;
-            background-color: #AAA;
-            border: 1px solid #999;
-            padding: 0.25em;
-            margin: 2px;
-        }
-    </style>
+    <link rel=stylesheet href=style.css>
     <script src="utils.js"></script>
     <script src="Point.js"></script>
     <script src="Vector.js"></script>
@@ -75,7 +20,10 @@
 
         function applyMoves(movesString) {
             var moves = parseMoves(movesString);
-            cube = moves.reduce(move, cube);
+            //cube = moves.reduce(move, cube);
+            for (var i = 0; i < moves.length; i++) {
+                cube = move(cube, moves[i]);
+            }
         }
 
         function resetCube() {
@@ -101,7 +49,7 @@
             if (scrambled === false) {
                 captionEl.innerHTML = movesString;
             } else {
-            captionEl.innerHTML = captionEl.innerHTML + '<br>' + movesString;
+                captionEl.innerHTML = captionEl.innerHTML + '<br>' + movesString;
             }
             scrambled = true;
             redraw();
