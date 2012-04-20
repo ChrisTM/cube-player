@@ -62,10 +62,20 @@
 
         function onApplyCustom() {
             var movesString = document.getElementById('custom-moves').value;
-            if (movesString === '') {
-                return;
+            if (isValidMovesString(movesString)) {
+                onApply_(movesString);
+            } else {
+                // TODO: make this less annoying.
+                alert('Please check your input -- that doesn\'t look like a proper moves string.');
             }
-            onApply_(movesString);
+        }
+
+
+        /* Input Validation
+         * ================ */
+        var isValidMovesString = function(movesString) {
+            var validRegex = /^ *([UDFBLR][2']? *)+$/;
+            return validRegex.test(movesString);
         }
 
 
@@ -174,8 +184,7 @@
         <button id=apply-custom>Apply</button>
         <button class=reset-button>Reset</button>
 
-        <p>Valid moves are given by <samp>F</samp>, <samp>B</samp>,
-        <samp>U</samp>, <samp>D</samp>, <samp>L</samp>, <samp>R</samp>, which represent rotating the front, back, up, down, left, or right faces a quarter-turn clockwise. Counter-clockwise or 180 degree turns are done by adding either a <samp>2</samp> or a <samp>'</samp> (single prime) directly after a face. <samp>F2</samp> means "rotate the front face 180 degrees".</p>
+        <p>Valid moves are given by <samp>F</samp>, <samp>B</samp>, <samp>U</samp>, <samp>D</samp>, <samp>L</samp>, <samp>R</samp>, which represent rotating the front, back, up, down, left, or right faces a quarter-turn clockwise. Counter-clockwise or 180 degree turns are done by adding either a <samp>'</samp> (single prime) or a <samp>2</samp> directly after a face. <samp>F2</samp> means "rotate the front face 180 degrees".</p>
     </section>
 </body>
 
