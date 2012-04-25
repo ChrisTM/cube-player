@@ -37,8 +37,6 @@
             resetCube();
             scrambled = false;
             redraw();
-
-            e.preventDefault();
         }
 
         function onApply_(movesString) {
@@ -81,6 +79,16 @@
         var isValidMovesString = function(movesString) {
             var validRegex = /^ *([UDFBLR][2']? *)+$/;
             return validRegex.test(movesString);
+        }
+
+        function onCustomInput(e) {
+            console.log('input', e.srcElement.value);
+            var inputEl = e.src.Element;
+            if (isValidMovesString(inputEl.value)) {
+                inputEl.className = '';
+            } else {
+                inputEl.className = 'invalid';
+            }
         }
 
 
@@ -148,10 +156,14 @@
             var resetButtons = document.querySelectorAll('.reset-button');
             resetButtons[0].addEventListener('click', onResetCube, false);
             resetButtons[1].addEventListener('click', onResetCube, false);
+
             document.getElementById('preset-form').addEventListener('submit',
                 onApplyPreset, false);
             document.getElementById('custom-form').addEventListener('submit',
                 onApplyCustom, false);
+
+            document.getElementById('custom-moves').addEventListener('input',
+                onCustomInput, false);
 
             initializeCanvas(canvas);
             redraw();

@@ -43,6 +43,16 @@ figure {
 input, button, select {
     font-size: inherit;
     padding: 0.25em;
+    margin: 0.125em;
+}
+
+input { /* Chrome 18.0.1025.162 doesn't display the box shadow when the border is 2px. This is a hack just to get the shadow showing. */
+    border: 1px solid grey;
+}
+
+.invalid {
+    box-shadow: 0 0 0.25em red;
+    background-color: #FDD;
 }
 
 samp {
