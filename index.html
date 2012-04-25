@@ -153,9 +153,8 @@
             window.addEventListener('mouseup', onMouseUp, false);
             window.addEventListener('mousemove', onMouseMove, false);
 
-            var resetButtons = document.querySelectorAll('.reset-button');
-            resetButtons[0].addEventListener('click', onResetCube, false);
-            resetButtons[1].addEventListener('click', onResetCube, false);
+            document.getElementById('reset-button').addEventListener('click',
+                onResetCube, false);
 
             document.getElementById('preset-form').addEventListener('submit',
                 onApplyPreset, false);
@@ -179,7 +178,10 @@
 
     <figure>
         <canvas id=canvas width=400 height=400></canvas>
-        <figcaption id=caption>A solved cube.</figcaption>
+        <div>
+            <input type=button id=reset-button value="Reset Cube">
+            <figcaption id=caption>A solved cube.</figcaption>
+        </div>
     </figure>
 
     <section id=controls>
@@ -195,14 +197,12 @@
                 <option value="F U F R L2 B D' R D2 L D' B R2 L F U F">Stripes</option>
             </select>
             <input type=submit id=apply-preset value=Apply>
-            <input type=button class=reset-button value=Reset>
         </form>
 
         <h3>Use your own moves</h3>
         <form id=custom-form>
             <input id=custom-moves placeholder="example: UR2U'">
             <input type=submit id=apply-custom value=Apply>
-            <input type=button class=reset-button value=Reset>
         </form>
 
         <p>Valid moves are given by <samp>F</samp>, <samp>B</samp>, <samp>U</samp>, <samp>D</samp>, <samp>L</samp>, <samp>R</samp>, which represent rotating the front, back, up, down, left, or right faces a quarter-turn clockwise. Counter-clockwise or 180 degree turns are done by adding either a <samp>'</samp> (single prime) or a <samp>2</samp> directly after a face. <samp>F2</samp> means "rotate the front face 180 degrees".</p>
