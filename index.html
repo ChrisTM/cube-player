@@ -27,17 +27,18 @@
         }
 
         function resetCube() {
-            console.log("resetting");
             cube = newCube();
 
             var captionEl = document.getElementById('caption');
             captionEl.innerHTML = 'A solved cube.';
         }
 
-        function onResetCube() {
+        function onResetCube(e) {
             resetCube();
             scrambled = false;
             redraw();
+
+            e.preventDefault();
         }
 
         function onApply_(movesString) {
@@ -55,12 +56,14 @@
             redraw();
         }
 
-        function onApplyPreset() {
+        function onApplyPreset(e) {
             var movesString = document.getElementById('preset-moves').value;
             onApply_(movesString);
+
+            e.preventDefault();
         }
 
-        function onApplyCustom() {
+        function onApplyCustom(e) {
             var movesString = document.getElementById('custom-moves').value;
             if (isValidMovesString(movesString)) {
                 onApply_(movesString);
@@ -68,6 +71,8 @@
                 // TODO: make this less annoying.
                 alert('Please check your input -- that doesn\'t look like a proper moves string.');
             }
+
+            e.preventDefault();
         }
 
 
@@ -143,9 +148,9 @@
             var resetButtons = document.querySelectorAll('.reset-button');
             resetButtons[0].addEventListener('click', onResetCube, false);
             resetButtons[1].addEventListener('click', onResetCube, false);
-            document.getElementById('apply-preset').addEventListener('click',
+            document.getElementById('preset-form').addEventListener('submit',
                 onApplyPreset, false);
-            document.getElementById('apply-custom').addEventListener('click',
+            document.getElementById('custom-form').addEventListener('submit',
                 onApplyCustom, false);
 
             initializeCanvas(canvas);
@@ -161,28 +166,32 @@
     <p>Experiment with applying different patterns to a cube. Click and drag the cube to see it from other angles. The cube's caption will describe what moves have been applied to it.</p>
 
     <figure>
-        <canvas id=canvas width=500 height=500></canvas>
+        <canvas id=canvas width=400 height=400></canvas>
         <figcaption id=caption>A solved cube.</figcaption>
     </figure>
 
     <section id=controls>
         <h2>Apply your own moves</h2>
         <h3>Use a preset</h3>
-        <select id=preset-moves>
-            <option value="F2 B2 R2 L2 U2 D2">Checkers</option>
-            <option value="U D' R L' F B' U D'">Spots</option>
-            <option value="F L F U' R U F2 L2 U' L' B D' B' L2 U">Cube in Cube</option>
-            <option value="L B2 D R B' F D' L' R D' U F' R2 U'">Snake</option>
-            <option value="F U2 L F L' B L U B' R' L' U R' D' F' B R2">Exchanged Peaks</option>
-            <option value="F U F R L2 B D' R D2 L D' B R2 L F U F">Stripes</option>
-        </select>
-        <button id=apply-preset>Apply</button>
-        <button class=reset-button>Reset</button>
+        <form id=preset-form>
+            <select id=preset-moves>
+                <option value="F2 B2 R2 L2 U2 D2">Checkers</option>
+                <option value="U D' R L' F B' U D'">Spots</option>
+                <option value="F L F U' R U F2 L2 U' L' B D' B' L2 U">Cube in Cube</option>
+                <option value="L B2 D R B' F D' L' R D' U F' R2 U'">Snake</option>
+                <option value="F U2 L F L' B L U B' R' L' U R' D' F' B R2">Exchanged Peaks</option>
+                <option value="F U F R L2 B D' R D2 L D' B R2 L F U F">Stripes</option>
+            </select>
+            <input type=submit id=apply-preset value=Apply>
+            <input type=button class=reset-button value=Reset>
+        </form>
 
         <h3>Use your own moves</h3>
-        <input id=custom-moves placeholder="example: UR2U'">
-        <button id=apply-custom>Apply</button>
-        <button class=reset-button>Reset</button>
+        <form id=custom-form>
+            <input id=custom-moves placeholder="example: UR2U'">
+            <input type=submit id=apply-custom value=Apply>
+            <input type=button class=reset-button value=Reset>
+        </form>
 
         <p>Valid moves are given by <samp>F</samp>, <samp>B</samp>, <samp>U</samp>, <samp>D</samp>, <samp>L</samp>, <samp>R</samp>, which represent rotating the front, back, up, down, left, or right faces a quarter-turn clockwise. Counter-clockwise or 180 degree turns are done by adding either a <samp>'</samp> (single prime) or a <samp>2</samp> directly after a face. <samp>F2</samp> means "rotate the front face 180 degrees".</p>
     </section>
