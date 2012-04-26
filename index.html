@@ -176,7 +176,7 @@
     <h1>Cube Player</h1>
 
     <section id=controls>
-        <h2>Test some moves&hellip;</h2>
+        <h2>Try some moves&hellip;</h2>
 
         <form id=preset-form>
             <h3>Use a preset</h3>
@@ -192,14 +192,14 @@
         </form>
 
         <form id=custom-form>
-            <h3>Use your own moves</h3>
+            <h3>Use your own moves (<a href="#move-notation-docs" title="Learn the move notation">?</a>)</h3>
             <input id=custom-moves placeholder="example: UR2U'">
             <input type=submit id=apply-custom value=Apply>
         </form>
     </section>
 
     <figure>
-        <canvas id=canvas width=400 height=400></canvas>
+        <canvas id=canvas width=500 height=500></canvas>
         <div>
             <input type=button id=reset-button value="Reset Cube">
             <figcaption id=caption>A solved cube.</figcaption>
@@ -214,15 +214,15 @@
         <h3>Notes</h3>
         <ul>
             <li>Click and drag the cube to rotate it</li>
-            <li>Moves are applied on top of each other &mdash; click "Reset Cube" to get back to a solves state</li>
+            <li>Moves are applied on top of each other &mdash; click &rdquo;Reset Cube&ldquo; to get back to a solves state</li>
             <li>The moves currently applied to the cube are described in the caption area</li>
         </ul>
 
-        <h3>Move Notation</h3>
+        <h3 id=move-notation-docs>Move Notation</h3>
         <p>People who play with Rubik's Cube's have developed a textual method
         of describing changes to the cube. The notation assumes that the user
-        never rotates the cube; if color X started facing up, it will always
-        face up. The same goes for the other faces.</p>
+        never rotates the cube; if the face for color X started facing
+        up/down/etc, that face will always face up/down/etc.</p>
 
         <p>The six faces are represented by these capital letters:</p>
         <ul>
@@ -234,14 +234,14 @@
             <li><samp>D</samp> means Down</li>
         </ul>
 
-        <p>Writing one of these faces down means "turn that face a quarter-turn
-        clockwise". Counter-clockwise and 180 degree turns are represented by
-        adding either a <samp>'</samp> (single prime) or a <samp>2</samp>
-        directly after the face symbol.<p>
+        <p>In move notation, these symbols means &rdquo;turn that face a
+        quarter-turn clockwise&ldquo;. Counter-clockwise and 180 degree turns
+        can be expressed by adding either a <samp>'</samp> (single prime) or a
+        <samp>2</samp> directly after the face symbol.<p>
 
-        <p>Example: <samp>F R2 F'</samp> means "rotate the front face a
+        <p>Example: <samp>F R2 F'</samp> means &rdquo;rotate the front face a
         quarter-turn clockwise, then rotate the right face 180 degrees, then
-        rotate the front face a quater-turn counter-clockwise".</p>
+        rotate the front face a quater-turn counter-clockwise&ldquo;.</p>
     </section>
 
 </body>

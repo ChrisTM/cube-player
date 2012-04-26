@@ -1,9 +1,11 @@
+@import url(http://fonts.googleapis.com/css?family=Droid+Sans:400,700);
+
 * { margin: 0; padding: 0; }
 
 body {
     background-color: #BBB;
-    padding: 1em;
-    font-family: sans-serif;
+    margin: 2em;
+    font-family: 'Droid Sans', sans-serif;
     line-height: 1.5em;
     max-width: 35em;
 }
@@ -14,6 +16,7 @@ h1, h2, h3 {
 h1 {
     font-size: 2.25em;
     line-height: 1.333333333em;
+    font-weight: bold;
 }
 h2 {
     font-size: 1.75em;
@@ -44,6 +47,14 @@ figure {
     border: 1px solid black;
 }
 
+input[type=button], input[type=submit] {
+    border-radius: 0.333em;
+    background-color: #DDD;
+}
+input[type=button]:hover, input[type=submit]:hover {
+    background-color: #EEE;
+}
+
 #reset-button {
     float: right;
     margin: 0;
@@ -68,7 +79,7 @@ figure {
 input, button, select {
     font-size: inherit;
     padding: 0.25em;
-    margin: 0.125em;
+    margin-right: 0.125em;
 }
 
 input { /* Chrome 18.0.1025.162 doesn't display the box shadow when the border is 2px. This is a hack just to get the shadow showing. */
