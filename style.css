@@ -5,6 +5,7 @@ body {
     padding: 1em;
     font-family: sans-serif;
     line-height: 1.5em;
+    max-width: 35em;
 }
 
 h1, h2, h3 {
