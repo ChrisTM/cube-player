@@ -78,12 +78,12 @@
          * ================ */
         var isValidMovesString = function(movesString) {
             var validRegex = /^ *([UDFBLR][2']? *)+$/;
-            return validRegex.test(movesString);
+            return (movesString === '' || validRegex.test(movesString));
         }
 
         function onCustomInput(e) {
             console.log('input', e.srcElement.value);
-            var inputEl = e.src.Element;
+            var inputEl = e.srcElement;
             if (isValidMovesString(inputEl.value)) {
                 inputEl.className = '';
             } else {
