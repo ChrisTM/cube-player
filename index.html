@@ -108,8 +108,14 @@
             startX: null,
             startY: null
         };
+
         function onMouseMove(e) {
             if (tumbleInfo.dragging) {
+                // prevent things from getting highlighted in Chrome 20 when
+                // the user is dragging. Firefox 14 doesn't seem to need a fix
+                // for this.
+                document.body.style.webkitUserSelect = 'none';
+
                 y = tumbleInfo.startY + 0.01 * (tumbleInfo.clickX - e.screenX);
                 x = tumbleInfo.startX + 0.01 * (tumbleInfo.clickY - e.screenY);
                 if (x > Math.PI/2) {
@@ -118,6 +124,9 @@
                 else if (x < -Math.PI/2) {
                     x = -Math.PI/2;
                 }
+            } else {
+                // re-enable selection
+                document.body.style.webkitUserSelect = '';
             }
         }
 
